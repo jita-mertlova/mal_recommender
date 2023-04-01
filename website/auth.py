@@ -28,6 +28,7 @@ def login():
     return render_template("login.html", user=current_user)
 
 @auth.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
@@ -55,7 +56,7 @@ def sign_up():
             new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='sha256'))
             db.session.add(new_user)
             db.session.commit()
-            login_user(user, remember=True)
+            #login_user(user, remember=True)
             flash('Account created!', category=email)
             return redirect(url_for('views.home'))    # i am finding what url maps to the home function in views.py
-    return render_template("sign_up.html")
+    return render_template("sign_up.html", user=current_user)
