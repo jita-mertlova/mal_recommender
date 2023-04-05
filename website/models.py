@@ -17,12 +17,13 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(150))
     notes = db.relationship('Note')
 
-
-""""
 class Rating(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(150), unique=True)
-    password = db.Column(db.String(150))
-    first_name = db.Column(db.String(150))
-    notes = db.relationship('Note')
-"""""
+    rating = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+class Item(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(300))
+    imageLink = db.Column(db.String(250))
+    # vektor reprezentujici item?
