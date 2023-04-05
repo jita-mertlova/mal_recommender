@@ -2,6 +2,8 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
+#from .models import User
+from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
@@ -33,6 +35,10 @@ def create_app():
 def create_database(app):
     if not path.exists('website/' + DB_NAME):
         db.create_all(app=app)
+        from .models import User
+        new_user = User(email="admin@a", first_name="Admin", password=generate_password_hash("aa", method='sha256'), is_admin=False)
+        #db.session.add(new_user)
+        #db.session.commit()
         # nafeedovat tam product vektory
 
         print('Created Database!')

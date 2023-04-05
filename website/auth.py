@@ -53,7 +53,7 @@ def sign_up():
         elif len(password1) < 2:
             flash('Password must be at least 2 characters.', category='error')
         else:
-            new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='sha256'))
+            new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='sha256'), is_admin=False)
             db.session.add(new_user)
             db.session.commit()
             #login_user(user, remember=True)
