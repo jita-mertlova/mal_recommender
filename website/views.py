@@ -2,8 +2,11 @@
 from flask import Blueprint, render_template, request, flash, jsonify
 import json
 from flask_login import login_required, current_user
+
+from .controller import recalc
 from .models import Note
 from . import db
+#from controller.py import recalculate
 
 views = Blueprint('views', __name__)
 
@@ -49,4 +52,9 @@ def reccommend():
 @views.route('/recalculate', methods=['GET', 'POST'])
 @login_required
 def recalculate():
-    return render_template("recalculate.html", user=current_user)
+    if current_user.is_admin:
+        recalc()
+        return render_template("recalculate.html", user=current_user)
+    else:
+        return render_template("error.html", user=current_user)
+

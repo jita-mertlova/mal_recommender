@@ -40,6 +40,12 @@ def sign_up():
         first_name = request.form.get('firstName')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
+        is_admin = request.form.get('is_admin')
+
+        if is_admin == 't':
+            is_admin = True
+        else:
+            is_admin = False
 
         user = User.query.filter_by(email=email).first()
         if user:
@@ -53,7 +59,7 @@ def sign_up():
         elif len(password1) < 2:
             flash('Password must be at least 2 characters.', category='error')
         else:
-            new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='sha256'), is_admin=False)
+            new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='sha256'), is_admin=is_admin)
             db.session.add(new_user)
             db.session.commit()
             #login_user(user, remember=True)
