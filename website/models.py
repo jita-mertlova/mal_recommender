@@ -9,7 +9,6 @@ class Note(db.Model):
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True)
@@ -17,7 +16,6 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(150))
     is_admin = db.Column(db.Boolean)
     notes = db.relationship('Note')
-
 
 class Rating(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -28,4 +26,4 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(300))
     imageLink = db.Column(db.String(250))
-    # vektor reprezentujici item?
+    #vector = db.Column(db.ARRAY(db.Integer))
