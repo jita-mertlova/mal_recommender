@@ -16,14 +16,16 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(150))
     is_admin = db.Column(db.Boolean)
     notes = db.relationship('Note')
+    preferences = db.Column(db.String(150000))  # list with 19331 members
+    vector = db.Column(db.String(1500))  # list with 43 members
 
 class Rating(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     rating = db.Column(db.Integer)
+    item_row = db.Column(db.Integer)   # row index in dataframe items
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(300))
     imageLink = db.Column(db.String(250))
-    #vector = db.Column(db.ARRAY(db.Integer))

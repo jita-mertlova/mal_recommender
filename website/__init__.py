@@ -3,9 +3,16 @@ from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
 from werkzeug.security import generate_password_hash
+import pandas as pd
+from .controller import emptyProfile
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
+items = pd.read_csv('items.csv')
+nr_items = items.shape[0]
+nr_tags = items.shape[1] - 1
+print("Number of items: ", nr_items)
+print("Number of tags: ", nr_tags)
 
 def create_app():
     app = Flask(__name__)
@@ -36,9 +43,10 @@ def create_database(app):
         with app.app_context():
             db.create_all()
             from .models import User
-            myAdmin = User(email="admin@a", first_name="Admin", password=generate_password_hash("aa", method='sha256'), is_admin=True)
-            myUser = User(email="a@a", first_name="Test", password=generate_password_hash("aa", method='sha256'), is_admin=False)
+            myAdmin = User(email="admin@a", first_name="Admin", password=generate_password_hash("aa", method='sha256'), is_admin=True, preferences=emptyProfile(nr_items), vector=emptyProfile(nr_tags))
+            myUser = User(email="a@a", first_name="Test", password=generate_password_hash("aa", method='sha256'), is_admin=False, preferences=emptyProfile(nr_items), vector=emptyProfile(nr_tags))
             db.session.add(myAdmin)
             db.session.add(myUser)
             db.session.commit()
             print('Created database & added default users!')
+
