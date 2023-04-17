@@ -4,11 +4,12 @@ from os import path
 from flask_login import LoginManager
 from werkzeug.security import generate_password_hash
 import pandas as pd
-from .controller import emptyProfile
+from .controller import emptyProfile, defaultPreferences
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
 items = pd.read_csv('items.csv')
+idf = pd.read_csv('idf.csv')
 nr_items = items.shape[0]
 nr_tags = items.shape[1] - 1
 print("Number of items: ", nr_items)
@@ -42,11 +43,20 @@ def create_database(app):
     if not path.exists('website/' + DB_NAME):
         with app.app_context():
             db.create_all()
-            from .models import User
-            myAdmin = User(email="admin@a", first_name="Admin", password=generate_password_hash("aa", method='sha256'), is_admin=True, preferences=emptyProfile(nr_items), vector=emptyProfile(nr_tags))
-            myUser = User(email="a@a", first_name="Test", password=generate_password_hash("aa", method='sha256'), is_admin=False, preferences=emptyProfile(nr_items), vector=emptyProfile(nr_tags))
-            db.session.add(myAdmin)
-            db.session.add(myUser)
-            db.session.commit()
+            addDefaut()
             print('Created database & added default users!')
+
+
+def addDefaut():
+    from .models import User
+    my_admin_pref = defaultPreferences(nr_items, [1, 1, 0, -1, 1])
+    my_user_pref = defaultPreferences(nr_items, [1, -1, 1, -1, -1])
+    my_admin = User(email="admin@a", first_name="Admin", password=generate_password_hash("aa", method='sha256'),
+                   is_admin=True, preferences=my_admin_pref, vector=emptyProfile(nr_tags))
+    my_user = User(email="a@a", first_name="Test", password=generate_password_hash("aa", method='sha256'),
+                  is_admin=False, preferences=my_user_pref, vector=emptyProfile(nr_tags))
+    db.session.add(my_admin)
+    db.session.add(my_user)
+    db.session.commit()
+
 
