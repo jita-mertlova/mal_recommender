@@ -47,6 +47,7 @@ def rating():
 @views.route('/reccommend', methods=['GET', 'POST'])
 @login_required
 def reccommend():
+
     return render_template("reccommend.html", user=current_user)
 
 @views.route('/recalculate', methods=['GET', 'POST'])

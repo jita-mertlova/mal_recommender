@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def recalc():
     from . import items, idf, nr_tags, nr_items, db
     from .models import User
@@ -12,28 +13,26 @@ def recalc():
         print("Added to database, calculated user profile:", str(prof)[1:-1].replace(",", " "))
         db.session.commit()
     print("Realculated")
-    pass
 
-def sumproduct(a,b):
-    result = 0
-    result = sum(i * j for i, j in zip(a, b))
-    return result
 
 def buildProfile(pref):  # returns user vector based on the preference vector
-    from . import items, idf, nr_tags, nr_items, db
-    result = nr_tags * [0]
+    from . import items, idf, nr_tags, nr_items, tags, db
+    result = nr_tags * [0.0]
     prefListTmp = pref.split()
-    print(prefListTmp)
     prefList = [int(x) for x in prefListTmp]
     for i in range(len(result)):
-        result[i] = sumproduct(items.iloc[:, i+1].tolist(), prefList)
+        tagVector = items[tags[i]].tolist()
+        for f in range(len(tagVector)):
+            result[i] += tagVector[f] * prefList[f]
     return result
+
 
 def emptyProfile(count):
     profile = " "
     for i in range(count):
         profile += "0 "
     return profile
+
 
 def defaultPreferences(count, start):
     profile = " "
@@ -43,9 +42,8 @@ def defaultPreferences(count, start):
         profile += "0 "
     return profile
 
-def reccommend(user_vector):
 
-    pass
-
-def cosine():
-    pass
+def similarity(nr, userVector):
+    from . import items, idf, nr_tags, nr_items, tags, db
+    res = nr * [""]
+    return res
