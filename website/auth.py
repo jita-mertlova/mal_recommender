@@ -1,7 +1,7 @@
 # here we will store standard routes for the website (e.g. where users can actually go to
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .models import User
-from . import db, emptyProfile, nr_tags, nr_items  ##means from __init__.py import db
+from . import db, emptyProfile, nr_tags, nr_items, default_reccommendations_names, default_reccommendations_numbers  ##means from __init__.py import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 
@@ -59,7 +59,7 @@ def sign_up():
         elif len(password1) < 2:
             flash('Password must be at least 2 characters.', category='error')
         else:
-            new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='sha256'), is_admin=is_admin, preferences=emptyProfile(nr_items), vector=emptyProfile(nr_tags))
+            new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='sha256'), is_admin=is_admin, preferences=emptyProfile(nr_items), vector=emptyProfile(nr_tags), reccommended_names=default_reccommendations_names, reccommended_numbers=default_reccommendations_numbers)
             db.session.add(new_user)
             db.session.commit()
             #login_user(user, remember=True)

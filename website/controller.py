@@ -12,6 +12,11 @@ def recalc():
         user.vector = str(prof)[1:-1].replace(",", " ")
         print("Added to database, calculated user profile:", str(prof)[1:-1].replace(",", " "))
         db.session.commit()
+    for user in users:
+        reccNames, reccNumbers = similarity(10, user.vector)
+        user.reccommended_names = reccNames
+        user.reccommended_numbers = reccNumbers
+        db.session.commit()
     print("Realculated")
 
 
@@ -57,7 +62,8 @@ def similarity(nr, userVectorRaw):
         for i in range(nr_tags):
             table['Prediction'].iloc[index] += userVector[i] * idf[i] * oneItem[i]
     order = table.sort_values('Prediction', ascending=False)
-    upper = order['Title'].head(nr).tolist()
-    print(order)
-    print(upper)
-    return upper
+    upperNames = order['Title'].head(nr).tolist()
+    upperNumbers = order['Prediction'].head(nr).tolist()
+    print(str(upperNames))
+    print(str(upperNumbers))
+    return str(upperNames), str(upperNumbers)

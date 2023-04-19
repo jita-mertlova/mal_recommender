@@ -18,6 +18,8 @@ class User(db.Model, UserMixin):
     notes = db.relationship('Note')
     preferences = db.Column(db.String(150000))  # list with 19331 members
     vector = db.Column(db.String(1500))  # list with 43 members
+    reccommended_names = db.Column(db.String(15000))
+    reccommended_numbers = db.Column(db.String(15000))
 
 class Rating(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)

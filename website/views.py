@@ -46,9 +46,10 @@ def rating():
 @views.route('/reccommend', methods=['GET', 'POST'])
 @login_required
 def reccommend():
-    res = similarity(10, current_user.vector)
-    dummy = ['arfdj', 'dhjshfjs', 'djahdsjhs']
-    return render_template("reccommend.html", user=current_user, animes=res)
+    resultNames = eval(current_user.reccommended_names)
+    print(resultNames)
+    resultNumbers = eval(current_user.reccommended_numbers)
+    return render_template("reccommend.html", user=current_user, animesNames=resultNames, animesNumbers=resultNumbers)
 
 @views.route('/recalculate', methods=['GET', 'POST'])
 @login_required
