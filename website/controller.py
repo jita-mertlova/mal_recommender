@@ -43,7 +43,21 @@ def defaultPreferences(count, start):
     return profile
 
 
-def similarity(nr, userVector):
+def similarity(nr, userVectorRaw):
     from . import items, idf, nr_tags, nr_items, tags, db
-    res = nr * [""]
-    return res
+    userVectorTmp = userVectorRaw.split()
+    userVector = [float(x) for x in userVectorTmp]
+    table = pd.DataFrame(index=range(nr_items), columns=range(2))
+    table.columns = ['Title', 'Prediction']
+    table['Title'] = items['Title'].copy()
+    for index, row in items.iterrows():
+        oneItem = row.tolist()
+        oneItem.pop(0)
+        table['Prediction'].iloc[index] = 0
+        for i in range(nr_tags):
+            table['Prediction'].iloc[index] += userVector[i] * idf[i] * oneItem[i]
+    order = table.sort_values('Prediction', ascending=False)
+    upper = order['Title'].head(nr).tolist()
+    print(order)
+    print(upper)
+    return upper
