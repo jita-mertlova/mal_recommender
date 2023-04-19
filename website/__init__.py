@@ -53,12 +53,16 @@ def addDefaut():
     from .models import User
     my_admin_pref = defaultPreferences(nr_items, [1, 1, 0, -1, 1])
     my_user_pref = defaultPreferences(nr_items, [1, -1, 1, -1, -1])
+    my_second_user_pref = defaultPreferences(nr_items, [-1, -1, -1, -1, -1])
     my_admin = User(email="admin@a", first_name="Admin", password=generate_password_hash("aa", method='sha256'),
                    is_admin=True, preferences=my_admin_pref, vector=emptyProfile(nr_tags))
     my_user = User(email="a@a", first_name="Test", password=generate_password_hash("aa", method='sha256'),
                   is_admin=False, preferences=my_user_pref, vector=emptyProfile(nr_tags))
+    my_second_user = User(email="a@b", first_name="Test", password=generate_password_hash("aa", method='sha256'),
+                   is_admin=False, preferences=my_second_user_pref, vector=emptyProfile(nr_tags))
     db.session.add(my_admin)
     db.session.add(my_user)
+    db.session.add(my_second_user)
     db.session.commit()
 
 

@@ -2,4 +2,7 @@
 {% block title %}Anime Recommender: Rating{% endblock %}
 {% block content %}
     <h3>This is the rating page</h3>
+    {% for row in items %}
+    {{ print(item) }}
+  {% endfor %}
 {% endblock %}
