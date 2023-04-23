@@ -1,27 +1,26 @@
 import pandas as pd
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_colwidth', None)
 
 
 def recalc():
-    from . import items, idf, nr_tags, nr_items, db
+    from . import db
     from .models import User
     users = User.query.all()
     for user in users:
-        print(user.email)
         prof = buildProfile(user.preferences)
-        print("Calculated user profile:", prof)
         user.vector = str(prof)[1:-1].replace(",", " ")
-        print("Added to database, calculated user profile:", str(prof)[1:-1].replace(",", " "))
         db.session.commit()
     for user in users:
         reccNames, reccNumbers = similarity(10, user.vector)
         user.reccommended_names = reccNames
         user.reccommended_numbers = reccNumbers
         db.session.commit()
-    print("Realculated")
 
 
 def buildProfile(pref):  # returns user vector based on the preference vector
-    from . import items, idf, nr_tags, nr_items, tags, db
+    from . import items, nr_tags, tags
     result = nr_tags * [0.0]
     prefListTmp = pref.split()
     prefList = [int(x) for x in prefListTmp]
@@ -49,7 +48,7 @@ def defaultPreferences(count, start):
 
 
 def similarity(nr, userVectorRaw):
-    from . import items, idf, nr_tags, nr_items, tags, db
+    from . import items, idf, nr_tags, nr_items
     userVectorTmp = userVectorRaw.split()
     userVector = [float(x) for x in userVectorTmp]
     table = pd.DataFrame(index=range(nr_items), columns=range(2))
@@ -64,6 +63,14 @@ def similarity(nr, userVectorRaw):
     order = table.sort_values('Prediction', ascending=False)
     upperNames = order['Title'].head(nr).tolist()
     upperNumbers = order['Prediction'].head(nr).tolist()
-    print(str(upperNames))
-    print(str(upperNumbers))
     return str(upperNames), str(upperNumbers)
+
+def addRating(idx,num):
+    from flask_login import current_user
+    from . import db
+    resTmp = current_user.preferences.split()
+    result = [int(x) for x in resTmp]
+    result[idx] = num
+    current_user.preferences = str(result)[1:-1].replace(",", " ")
+    db.session.commit()
+    pass

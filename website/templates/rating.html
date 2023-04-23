@@ -2,7 +2,13 @@
 {% block title %}Anime Recommender: Rating{% endblock %}
 {% block content %}
     <h3>This is the rating page</h3>
-    {% for row in items %}
-    {{ print(item) }}
-  {% endfor %}
+    <form method="post" action="">
+      <select name="item">
+        {% for item in items %}
+        <option value="{{ item }}">{{ item }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" name="action" value="approve">Approve</button>
+      <button type="submit" name="action" value="disapprove">Disapprove</button>
+    </form>
 {% endblock %}

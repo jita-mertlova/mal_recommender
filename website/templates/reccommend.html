@@ -3,9 +3,12 @@
 {% block content %}
     <h3>Based on your submitted ratings, we reccommend you to check out the following anime series... </h3>
     <ul class="list-group list-group-flush">
-  {% for anime in animesNames %}
+  {% for i in range(10) %}
   <li class="list-group-item">
-    {{ anime }}
+
+      <h6 align="left">{{ animesNames[i] }}</h6>
+      <h6 align="right">{{ animesNumbers[i] }}</h6>
+
   </li>
   {% endfor %}
 </ul>
