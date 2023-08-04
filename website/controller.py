@@ -1,8 +1,5 @@
+import json
 import pandas as pd
-from .const import items, idf, tags, nr_tags, nr_items
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_colwidth', None)
 
 
 def recalc():
@@ -10,66 +7,56 @@ def recalc():
     from .models import User
     users = User.query.all()
     for user in users:
-        prof = build_profile(user.preferences)
-        user.vector = str(prof)[1:-1].replace(",", " ")
+        user.vector = build_profile(user.preferences)
         db.session.commit()
     for user in users:
-        reccNames, reccNumbers = similarity(10, user.vector)
-        user.reccommended_names = reccNames
-        user.reccommended_numbers = reccNumbers
+        names, numbers = similarity(10, user.vector)
+        user.recommended_names = names
+        user.recommended_numbers = numbers
         db.session.commit()
 
 
-def build_profile(pref):  # returns user vector based on the preference vector
+def build_profile(pref: json):  # returns user vector based on the preference vector
+    from .const import nr_tags, tags, items
     result = nr_tags * [0.0]
-    prefListTmp = pref.split()
-    prefList = [int(x) for x in prefListTmp]
+    pref_list = json.loads(pref)
     for i in range(len(result)):
         tagVector = items[tags[i]].tolist()
         for f in range(len(tagVector)):
-            result[i] += tagVector[f] * prefList[f]
-    return result
+            result[i] += tagVector[f] * pref_list[f]
+    return json.dumps(result)
 
 
-def empty_profile(count):
-    profile = " "
-    for i in range(count):
-        profile += "0 "
-    return profile
+def empty_profile(pref_length: int):
+    return json.dumps(pref_length * [0])
 
 
-def default_preferences(count, start):
-    profile = " "
-    for item in start:
-        profile += str(item) + " "
-    for i in range(len(start), count):
-        profile += "0 "
-    return profile
+def default_preferences(pref_length: int, beginning: list = []):
+    return json.dumps(beginning + (pref_length - len(beginning)) * [0])
 
 
-def similarity(nr, userVectorRaw):
-    userVectorTmp = userVectorRaw.split()
-    userVector = [float(x) for x in userVectorTmp]
+def similarity(threshold: int, user_vector_json: json):
+    from .const import items, nr_items, nr_tags, idf
+    user_vector = json.loads(user_vector_json)
     table = pd.DataFrame(index=range(nr_items), columns=range(2))
     table.columns = ['Title', 'Prediction']
     table['Title'] = items['Title'].copy()
     for index, row in items.iterrows():
-        oneItem = row.tolist()
-        oneItem.pop(0)
+        one_item = row.tolist()
+        one_item.pop(0)
         table['Prediction'].iloc[index] = 0
         for i in range(nr_tags):
-            table['Prediction'].iloc[index] += userVector[i] * idf[i] * oneItem[i]
+            table['Prediction'].iloc[index] += user_vector[i] * idf[i] * one_item[i]
     order = table.sort_values('Prediction', ascending=False)
-    upperNames = order['Title'].head(nr).tolist()
-    upperNumbers = order['Prediction'].head(nr).tolist()
-    return str(upperNames), str(upperNumbers)
+    upper_names = order['Title'].head(threshold).tolist()
+    upper_numbers = order['Prediction'].head(threshold).tolist()
+    return json.dumps(upper_names), json.dumps(upper_numbers)
 
-def addRating(idx,num):
+
+def addRating(idx, num):
     from flask_login import current_user
     from . import db
-    resTmp = current_user.preferences.split()
-    result = [int(x) for x in resTmp]
+    result = json.loads(current_user.preferences)
     result[idx] = num
-    current_user.preferences = str(result)[1:-1].replace(",", " ")
+    current_user.preferences = json.dumps(result)
     db.session.commit()
-    pass

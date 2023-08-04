@@ -56,8 +56,8 @@ def rating():
 @views.route('/reccommend', methods=['GET', 'POST'])
 @login_required
 def reccommend():
-    resultNames = eval(current_user.reccommended_names)
-    resultNumbers = eval(current_user.reccommended_numbers)
+    resultNames = eval(current_user.recommended_names)
+    resultNumbers = eval(current_user.recommended_numbers)
     return render_template("reccommend.html", user=current_user, animesNames=resultNames, animesNumbers=resultNumbers)
 
 @views.route('/recalculate', methods=['GET', 'POST'])

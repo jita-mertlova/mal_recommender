@@ -4,7 +4,7 @@ from os import path
 from flask_login import LoginManager
 from werkzeug.security import generate_password_hash
 from .controller import empty_profile, default_preferences
-from .const import nr_tags, nr_items, tags, idf, default_reccommendations_numbers, default_reccommendations_names
+from .const import nr_tags, nr_items, tags, idf, default_recommendation_numbers, default_recommendation_names
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
@@ -55,9 +55,9 @@ def add_defaut_users():
     db.session.add(my_second_user)
     db.session.commit()
 
-def create_default_user(email, first_name, password, is_admin, preferences):
+def create_default_user(email: str, first_name: str, password: str, is_admin: bool, preferences):
     from .models import User
     return User(email=email, first_name=first_name, password=generate_password_hash(password, method='sha256'),
-                    is_admin=is_admin, preferences=preferences, vector=empty_profile(nr_tags), reccommended_names=default_reccommendations_names, reccommended_numbers=default_reccommendations_numbers)
+                is_admin=is_admin, preferences=preferences, vector=empty_profile(nr_tags), recommended_names=default_recommendation_names, recommended_numbers=default_recommendation_numbers)
 
 

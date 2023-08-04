@@ -9,6 +9,7 @@ class Note(db.Model):
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True)
@@ -16,7 +17,7 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(150))
     is_admin = db.Column(db.Boolean)
     notes = db.relationship('Note')
-    preferences = db.Column(db.String(150000))  # list with 19331 members
-    vector = db.Column(db.String(1500))  # list with 43 members
-    reccommended_names = db.Column(db.String(15000))
-    reccommended_numbers = db.Column(db.String(15000))
+    preferences = db.Column(db.JSON)  # list with 19331 members
+    vector = db.Column(db.JSON)  # list with 43 members
+    recommended_names = db.Column(db.JSON)
+    recommended_numbers = db.Column(db.JSON)
