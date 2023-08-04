@@ -1,4 +1,5 @@
 import pandas as pd
+from .const import items, idf, tags, nr_tags, nr_items
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_colwidth', None)
@@ -9,7 +10,7 @@ def recalc():
     from .models import User
     users = User.query.all()
     for user in users:
-        prof = buildProfile(user.preferences)
+        prof = build_profile(user.preferences)
         user.vector = str(prof)[1:-1].replace(",", " ")
         db.session.commit()
     for user in users:
@@ -19,8 +20,7 @@ def recalc():
         db.session.commit()
 
 
-def buildProfile(pref):  # returns user vector based on the preference vector
-    from . import items, nr_tags, tags
+def build_profile(pref):  # returns user vector based on the preference vector
     result = nr_tags * [0.0]
     prefListTmp = pref.split()
     prefList = [int(x) for x in prefListTmp]
@@ -31,14 +31,14 @@ def buildProfile(pref):  # returns user vector based on the preference vector
     return result
 
 
-def emptyProfile(count):
+def empty_profile(count):
     profile = " "
     for i in range(count):
         profile += "0 "
     return profile
 
 
-def defaultPreferences(count, start):
+def default_preferences(count, start):
     profile = " "
     for item in start:
         profile += str(item) + " "
@@ -48,7 +48,6 @@ def defaultPreferences(count, start):
 
 
 def similarity(nr, userVectorRaw):
-    from . import items, idf, nr_tags, nr_items
     userVectorTmp = userVectorRaw.split()
     userVector = [float(x) for x in userVectorTmp]
     table = pd.DataFrame(index=range(nr_items), columns=range(2))

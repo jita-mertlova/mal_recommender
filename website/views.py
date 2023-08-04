@@ -4,7 +4,8 @@ from flask_login import login_required, current_user
 
 from .controller import recalc, addRating
 from .models import Note
-from . import db, items
+from . import db
+from .const import items
 
 views = Blueprint('views', __name__)
 
